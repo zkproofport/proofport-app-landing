@@ -16,7 +16,7 @@ export const ASCII_ZK = `
 
 export const ASCII_ARCHITECTURE = `
   ┌─────────────────────────────────────────────────────────────┐
-  │                    ZKProofPort Architecture                  │
+  │                    ZKProofport Architecture                  │
   ├─────────────────────────────────────────────────────────────┤
   │                                                             │
   │   dApp / Website                                            │

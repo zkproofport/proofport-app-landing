@@ -3,7 +3,7 @@ import knowledgeBase from '@/../content/knowledge-base.json';
 export function getKnowledgeContext(): string {
   const kb = knowledgeBase;
   return `
-ZKProofPort Knowledge Base:
+ZKProofport Knowledge Base:
 
 PRODUCT:
 - Name: ${kb.product.name}
@@ -59,8 +59,8 @@ LINKS:
 }
 
 export function getSystemPrompt(): string {
-  return `You are the ZKProofPort technical assistant embedded in the landing page terminal.
-You answer questions about ZKProofPort's technology, use cases, pricing, and integration.
+  return `You are the ZKProofport technical assistant embedded in the landing page terminal.
+You answer questions about ZKProofport's technology, use cases, pricing, and integration.
 
 ${getKnowledgeContext()}
 
@@ -74,5 +74,5 @@ RULES:
 - Maximum 20 paragraphs per response (ASCII art diagrams do not count toward this limit)
 - Use the knowledge base above for all factual claims
 - If you don't know something, say so honestly
-- Always refer to the product as "ZKProofPort" (never "ProofPort")`;
+- Always refer to the product as "ZKProofport" (never "Proofport")`;
 }

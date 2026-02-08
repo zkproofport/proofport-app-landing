@@ -1,8 +1,8 @@
 {
   "product": {
-    "name": "ZKProofPort",
+    "name": "ZKProofport",
     "tagline": "Privacy Infrastructure for the Next Generation of dApps",
-    "description": "ZKProofPort is a complete zero-knowledge proof pipeline from Noir circuits to mobile proof generation to on-chain verification.",
+    "description": "ZKProofport is a complete zero-knowledge proof pipeline from Noir circuits to mobile proof generation to on-chain verification.",
     "status": "Live on Base Sepolia (testnet)",
     "circuits": ["coinbase_attestation (KYC)", "coinbase_country_attestation (Country)"]
   },
@@ -44,7 +44,7 @@
       "Install SDK: npm install @proofport/sdk",
       "Follow the integration guide"
     ],
-    "sdk_example": "import { ProofPortSDK } from '@proofport/sdk';\nconst sdk = new ProofPortSDK({ apiKey: 'YOUR_KEY' });\nconst { proofRequest } = await sdk.createProofRequest({ circuitId: 'coinbase_attestation' });"
+    "sdk_example": "import { ProofportSDK } from '@proofport/sdk';\nconst sdk = new ProofportSDK({ apiKey: 'YOUR_KEY' });\nconst { proofRequest } = await sdk.createProofRequest({ circuitId: 'coinbase_attestation' });"
   },
   "security": {
     "nullifier": "keccak256(keccak256(address + signalHash) + scope) — prevents proof reuse",

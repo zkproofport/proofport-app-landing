@@ -8,7 +8,7 @@ export function getDevelopWelcomeLines(): TerminalLine[] {
   return [
     // Shield/anchor ASCII art
     makeLine('ascii', '        ╔═══════╗', '#64748b'),
-    makeLine('ascii', '        ║   ⚓   ║        ZKProofPort Develop v0.1.0', '#64748b'),
+    makeLine('ascii', '        ║   ⚓   ║        ZKProofport Develop v0.1.0', '#64748b'),
     makeLine('ascii', '        ║  ╱ ╲  ║        Noir Circuit Builder · Gemini 2.5 Flash', '#64748b'),
     makeLine('ascii', '        ║ ╱ ⬡ ╲ ║        ~/sandbox', '#64748b'),
     makeLine('ascii', '        ║╱     ╲║', '#64748b'),

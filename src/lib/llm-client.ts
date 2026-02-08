@@ -37,7 +37,7 @@ export async function generateFollowUpQuestions(
   sessionId?: string,
 ): Promise<string[]> {
   const sid = sessionId || 'default';
-  const systemPrompt = `Based on the conversation, generate exactly 3 follow-up questions the user might want to ask about ZKProofPort.
+  const systemPrompt = `Based on the conversation, generate exactly 3 follow-up questions the user might want to ask about ZKProofport.
 
 RULES:
 - LANGUAGE: Match the language of the user's last message. If Korean, write in Korean. If English, write in English.

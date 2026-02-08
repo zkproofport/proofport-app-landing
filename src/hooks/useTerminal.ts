@@ -248,7 +248,7 @@ export function useTerminal() {
           makeLine('info', `  [${s.index}] ${s.path.padEnd(16)} ${s.title}`)
         ),
         makeLine('info', ''),
-        makeLine('info', '  /chat              Ask questions about ZKProofPort'),
+        makeLine('info', '  /chat              Ask questions about ZKProofport'),
         makeLine('info', '  /develop           Interactive ZK proof playground'),
         makeLine('info', '  /demo              Open live demo (external)'),
         makeLine('info', ''),
