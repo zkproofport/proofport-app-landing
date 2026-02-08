@@ -34,11 +34,11 @@ type ConnectionStep = TextStep | ProgressStep | CompleteStep;
 const connectionSteps: ConnectionStep[] = [
   { delay: 200, text: '$ ssh visitor@zkproofport.app', color: 'text-terminal-text' },
   { delay: 800, text: 'Connecting to zkproofport.app port 22...', color: 'text-terminal-cyan' },
-  { delay: 600, text: 'SSH-2.0-ZKProofPort_1.0', color: 'text-terminal-cyan' },
+  { delay: 600, text: 'SSH-2.0-ZKProofport_1.0', color: 'text-terminal-cyan' },
   { delay: 400, text: 'Authenticating with public key...', color: 'text-terminal-cyan' },
   { delay: 500, text: 'Authentication successful.', color: 'text-terminal-text' },
   { delay: 300, type: 'progress' },
-  { delay: 500, text: 'Connection established. Welcome to ZKProofPort.', color: 'text-terminal-text' },
+  { delay: 500, text: 'Connection established. Welcome to ZKProofport.', color: 'text-terminal-text' },
   { delay: 300, text: '', color: 'text-white' },
   { delay: 200, type: 'complete' },
 ];

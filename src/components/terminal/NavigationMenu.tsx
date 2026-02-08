@@ -31,7 +31,7 @@ export default function NavigationMenu({ sections, currentIndex }: NavigationMen
       </pre>
 
       <pre className="text-terminal-cyan">
-        {'  /chat              Ask questions about ZKProofPort'}
+        {'  /chat              Ask questions about ZKProofport'}
       </pre>
       <pre className="text-terminal-cyan">
         {'  /develop           Interactive ZK proof playground'}

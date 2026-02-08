@@ -7,8 +7,8 @@ interface Command {
 }
 
 const COMMANDS: Command[] = [
-  { name: '/home', description: 'Welcome to ZKProofPort', category: 'section' },
-  { name: '/about', description: 'What is ZKProofPort?', category: 'section' },
+  { name: '/home', description: 'Welcome to ZKProofport', category: 'section' },
+  { name: '/about', description: 'What is ZKProofport?', category: 'section' },
   { name: '/tech', description: 'Technology Stack', category: 'section' },
   { name: '/architecture', description: 'System Architecture', category: 'section' },
   { name: '/demos', description: 'Live Demonstrations', category: 'section' },
@@ -16,7 +16,7 @@ const COMMANDS: Command[] = [
   { name: '/stats', description: 'Network Statistics', category: 'section' },
   { name: '/team', description: 'About Us', category: 'section' },
   { name: '/contact', description: 'Get in Touch', category: 'section' },
-  { name: '/chat', description: 'Ask questions about ZKProofPort', category: 'mode' },
+  { name: '/chat', description: 'Ask questions about ZKProofport', category: 'mode' },
   { name: '/develop', description: 'Interactive ZK proof playground', category: 'mode' },
   { name: '/demo', description: 'Open live demo (external)', category: 'mode' },
   { name: '/help', description: 'Show all commands', category: 'utility' },

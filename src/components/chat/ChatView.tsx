@@ -29,8 +29,8 @@ const SPINNER_SPEED = 80;
 
 const ALL_SUGGESTIONS = [
   // Product
-  'ZKProofPort\uAC00 \uBB50\uC57C?',
-  'How does ZKProofPort work?',
+  'ZKProofport\uAC00 \uBB50\uC57C?',
+  'How does ZKProofport work?',
   // Technology
   'Noir \uD68C\uB85C\uAC00 \uBB54\uAC00\uC694?',
   '\uC99D\uBA85 \uC0DD\uC131\uC5D0 \uC5BC\uB9C8\uB098 \uAC78\uB824?',
@@ -400,7 +400,7 @@ function WelcomeScreen({
           onChange={onInputChange}
           onSubmit={onSubmit}
           disabled={disabled}
-          placeholder={'ZKProofPort\uC5D0\uAC8C \uBB3C\uC5B4\uBCF4\uAE30'}
+          placeholder={'ZKProofport\uC5D0\uAC8C \uBB3C\uC5B4\uBCF4\uAE30'}
           autoFocus
           suggestions={initialChips}
         />
@@ -507,7 +507,7 @@ function ChatScreen({
           onChange={onInputChange}
           onSubmit={onSubmit}
           disabled={disabled}
-          placeholder={'ZKProofPort\uC5D0\uAC8C \uBB3C\uC5B4\uBCF4\uAE30'}
+          placeholder={'ZKProofport\uC5D0\uAC8C \uBB3C\uC5B4\uBCF4\uAE30'}
           autoFocus
           suggestions={placeholderSuggestions}
         />

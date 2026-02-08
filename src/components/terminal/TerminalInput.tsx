@@ -89,7 +89,7 @@ const TerminalInput = forwardRef<HTMLInputElement, TerminalInputProps>(
     const placeholder = mode === 'browse'
       ? '/'
       : mode === 'chat'
-      ? 'Ask a question about ZKProofPort...'
+      ? 'Ask a question about ZKProofport...'
       : 'Describe what you want to develop...';
 
     return (

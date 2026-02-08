@@ -38,7 +38,7 @@ function BootScreen() {
         {/* Product info */}
         <div className="flex flex-col justify-center gap-1 text-center sm:text-left pt-0 sm:pt-1">
           <span className="text-terminal-cyan font-semibold text-xs md:text-sm tracking-tight">
-            ZKProofPort Develop v0.1.0
+            ZKProofport Develop v0.1.0
           </span>
           <span className="text-xs" style={{ color: '#94a3b8' }}>
             Noir Circuit Builder &middot; Gemini 2.5 Flash
