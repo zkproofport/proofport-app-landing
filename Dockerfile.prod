@@ -1,0 +1,87 @@
+# Dockerfile.prod
+# Production multi-stage Dockerfile for ZKProofPort landing page
+# CRITICAL: Uses node:20-slim (Debian-based, glibc) because nargo and bb binaries require glibc
+# Alpine (musl) is incompatible with Noir/Barretenberg tooling
+# Includes nargo 1.0.0-beta.8 and bb binaries for circuit compilation at runtime
+
+# Stage 1: Install dependencies
+FROM node:20-slim AS deps
+
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+RUN npm ci
+
+# Stage 2: Build Next.js application
+FROM node:20-slim AS builder
+
+WORKDIR /app
+
+# Copy dependencies from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+
+# Copy config and source files
+COPY package.json package-lock.json* tsconfig.json next.config.ts postcss.config.mjs ./
+COPY content ./content
+COPY src ./src
+
+# Copy public assets
+RUN mkdir -p public && (cp -r public/* ./public/ 2>/dev/null || true)
+
+# Build Next.js app
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+RUN npm run build
+
+# Stage 3: Download ZK tooling binaries (nargo + bb)
+FROM debian:bookworm-slim AS zk-tools
+
+# Install curl and xz-utils for downloading binaries
+RUN apt-get update && \
+    apt-get install -y curl xz-utils && \
+    rm -rf /var/lib/apt/lists/*
+
+# Download nargo 1.0.0-beta.8 (Noir compiler)
+RUN curl -L https://github.com/noir-lang/noir/releases/download/v1.0.0-beta.8/nargo-x86_64-unknown-linux-gnu.tar.gz \
+    | tar xz -C /usr/local/bin && \
+    chmod +x /usr/local/bin/nargo
+
+# Download bb (Barretenberg backend)
+RUN mkdir -p /tmp/bb-extract && \
+    curl -L "https://github.com/AztecProtocol/aztec-packages/releases/download/barretenberg-v0.82.2/barretenberg-x86_64-linux-gnu.tar.gz" \
+    | tar xz -C /tmp/bb-extract && \
+    find /tmp/bb-extract -name "bb" -type f -exec cp {} /usr/local/bin/bb \; && \
+    chmod +x /usr/local/bin/bb
+
+# Stage 4: Production runtime
+FROM node:20-slim
+
+# Install dumb-init for proper signal handling
+RUN apt-get update && \
+    apt-get install -y dumb-init && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Copy ZK tooling binaries from zk-tools stage
+COPY --from=zk-tools /usr/local/bin/nargo /usr/local/bin/nargo
+COPY --from=zk-tools /usr/local/bin/bb /usr/local/bin/bb
+
+# Copy Next.js standalone build output
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public/
+
+# Copy content directory (needed for knowledge base)
+COPY --from=builder /app/content ./content
+
+EXPOSE 3100
+
+ENV PORT=3100
+ENV HOSTNAME="0.0.0.0"
+
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["node", "server.js"]
