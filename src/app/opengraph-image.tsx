@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
-export const alt = 'ZKProofPort - Zero-Knowledge Proof Infrastructure';
+export const alt = 'ZKProofport - Zero-Knowledge Proof Infrastructure';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -26,7 +26,7 @@ export default async function Image() {
           visitor@zkproofport:~$
         </div>
         <div style={{ fontSize: 64, fontWeight: 'bold', marginBottom: 30, display: 'flex' }}>
-          ZKProofPort
+          ZKProofport
         </div>
         <div style={{ fontSize: 24, color: '#94a3b8', marginBottom: 40, display: 'flex' }}>
           Zero-Knowledge Proof Infrastructure for Mobile

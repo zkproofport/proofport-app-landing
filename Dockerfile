@@ -1,5 +1,5 @@
 # Dockerfile (dev)
-# Development Dockerfile for ZKProofPort landing page
+# Development Dockerfile for ZKProofport landing page
 # Multi-stage: extracts amd64 bb + libs, runs Node.js natively (arm64/amd64)
 # Runs Next.js dev server on port 3100 for docker-compose local dev
 

@@ -10,21 +10,21 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: 'ZKProofPort — Zero-Knowledge Proof Infrastructure',
-    template: '%s | ZKProofPort',
+    default: 'ZKProofport — Zero-Knowledge Proof Infrastructure',
+    template: '%s | ZKProofport',
   },
   description: 'Privacy infrastructure for the next generation of dApps. From Noir circuits to mobile proof generation to on-chain verification.',
   metadataBase: new URL(process.env.SITE_URL || 'https://zkproofport.app'),
   openGraph: {
-    title: 'ZKProofPort — Zero-Knowledge Proof Infrastructure',
+    title: 'ZKProofport — Zero-Knowledge Proof Infrastructure',
     description: 'Prove who you are without revealing who you are. Complete ZK proof pipeline from circuits to mobile to on-chain.',
-    siteName: 'ZKProofPort',
+    siteName: 'ZKProofport',
     type: 'website',
     locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ZKProofPort — Zero-Knowledge Proof Infrastructure',
+    title: 'ZKProofport — Zero-Knowledge Proof Infrastructure',
     description: 'Prove who you are without revealing who you are.',
   },
 };

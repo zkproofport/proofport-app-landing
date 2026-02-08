@@ -1,5 +1,5 @@
 # Dockerfile.prod
-# Production multi-stage Dockerfile for ZKProofPort landing page
+# Production multi-stage Dockerfile for ZKProofport landing page
 # CRITICAL: Uses node:20-slim (Debian-based, glibc) because nargo and bb binaries require glibc
 # Alpine (musl) is incompatible with Noir/Barretenberg tooling
 # Includes nargo 1.0.0-beta.8 and bb binaries for circuit compilation at runtime
