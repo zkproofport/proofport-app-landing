@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@theme {
+  --color-terminal-bg: #0a0f1e;
+  --color-terminal-text: #00ff41;
+  --color-terminal-cyan: #06b6d4;
+  --color-terminal-purple: #7c3aed;
+  --color-terminal-blue: #2563eb;
+  --color-terminal-dim: #4a5568;
+  --color-terminal-error: #ef4444;
+  --color-terminal-warning: #f59e0b;
+
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  --duration-typewriter: 30ms;
+  --duration-blink: 1s;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background-color: var(--color-terminal-bg);
+  color: var(--color-terminal-text);
+  font-family: var(--font-mono);
+}
+
+::selection {
+  background-color: rgba(0, 255, 65, 0.3);
+  color: #ffffff;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.cursor-blink {
+  animation: blink var(--duration-blink) step-end infinite;
+}
+
+.scanline {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(0, 255, 65, 0.03);
+  animation: scan 8s linear infinite;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* Terminal scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-terminal-dim);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-terminal-text);
+}
