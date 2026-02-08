@@ -1,0 +1,64 @@
+{
+  "product": {
+    "name": "ZKProofPort",
+    "tagline": "Privacy Infrastructure for the Next Generation of dApps",
+    "description": "ZKProofPort is a complete zero-knowledge proof pipeline from Noir circuits to mobile proof generation to on-chain verification.",
+    "status": "Live on Base Sepolia (testnet)",
+    "circuits": ["coinbase_attestation (KYC)", "coinbase_country_attestation (Country)"]
+  },
+  "technology": {
+    "circuit_language": "Noir 1.0.0-beta.8 (Aztec)",
+    "proving_backend": "Barretenberg (UltraPlonk)",
+    "mobile_proving": "mopro 0.3.2 (Rust FFI via UniFFI)",
+    "mobile_app": "React Native (iOS + Android)",
+    "on_chain": "Solidity verifiers on Base L2 (EVM)",
+    "relay": "Express + Socket.IO real-time relay",
+    "sdk": "TypeScript SDK with ethers v6",
+    "dashboard": "Next.js 15 admin dashboard"
+  },
+  "metrics": {
+    "proof_size": "256 bytes",
+    "verification_gas": "~200,000 gas",
+    "prove_time": "2-4 seconds on mobile",
+    "proofs_generated": 1247,
+    "on_chain_verified": 892,
+    "unique_wallets": 341
+  },
+  "pricing": {
+    "free": "10 verifications/month",
+    "credit": "Pay-per-use at $0.05/proof",
+    "plan1": "1,000 proofs/month",
+    "plan2": "10,000 proofs/month"
+  },
+  "use_cases": [
+    "Compliant DeFi (KYC without doxxing)",
+    "Geographic restriction enforcement",
+    "Age verification without revealing birthdate",
+    "DAO governance with one-person-one-vote via nullifiers",
+    "ZKPSwap: compliant DEX with privacy-preserving KYC"
+  ],
+  "integration": {
+    "steps": [
+      "Sign up at dashboard.zkproofport.app",
+      "Create a dApp and get your API key",
+      "Install SDK: npm install @proofport/sdk",
+      "Follow the integration guide"
+    ],
+    "sdk_example": "import { ProofPortSDK } from '@proofport/sdk';\nconst sdk = new ProofPortSDK({ apiKey: 'YOUR_KEY' });\nconst { proofRequest } = await sdk.createProofRequest({ circuitId: 'coinbase_attestation' });"
+  },
+  "security": {
+    "nullifier": "keccak256(keccak256(address + signalHash) + scope) — prevents proof reuse",
+    "privacy": "Zero knowledge: verifier learns nothing beyond the proved statement",
+    "on_chain": "Trustless verification via Solidity smart contracts"
+  },
+  "partners": {
+    "powered_by": "Aztec Network — Creator of Noir circuit language and Barretenberg proving backend. Privacy-first Ethereum L2, backed by Paradigm and Vitalik Buterin.",
+    "incubated_by": "Base (Coinbase L2) — Incubation program in progress."
+  },
+  "links": {
+    "demo": "https://demo.zkproofport.app",
+    "dashboard": "https://dashboard.zkproofport.app",
+    "github": "https://github.com/zkproofport",
+    "docs": "https://docs.zkproofport.app"
+  }
+}
