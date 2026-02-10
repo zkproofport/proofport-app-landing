@@ -1,8 +1,7 @@
 # Dockerfile.prod
 # Production multi-stage Dockerfile for ZKProofport landing page
-# CRITICAL: Uses node:20-slim (Debian-based, glibc) because nargo and bb binaries require glibc
-# Alpine (musl) is incompatible with Noir/Barretenberg tooling
-# Includes nargo 1.0.0-beta.8 and bb binaries for circuit compilation at runtime
+# Uses node:20-slim for Next.js and Ubuntu 24.04 for ZK tooling (bb needs glibc >= 2.38)
+# bb + required glibc libs are copied from Ubuntu stage to keep final image lightweight
 
 # Stage 1: Install dependencies
 FROM node:20-slim AS deps
@@ -34,11 +33,11 @@ ENV NODE_ENV=production
 RUN npm run build
 
 # Stage 3: Download ZK tooling binaries (nargo + bb)
-FROM debian:bookworm-slim AS zk-tools
+# Ubuntu 24.04 provides glibc 2.39 which bb requires (>= 2.38)
+FROM ubuntu:24.04 AS zk-tools
 
-# Install curl and xz-utils for downloading binaries
 RUN apt-get update && \
-    apt-get install -y curl xz-utils && \
+    apt-get install -y --no-install-recommends curl ca-certificates jq && \
     rm -rf /var/lib/apt/lists/*
 
 # Download nargo 1.0.0-beta.8 (Noir compiler)
@@ -46,19 +45,27 @@ RUN curl -L https://github.com/noir-lang/noir/releases/download/v1.0.0-beta.8/na
     | tar xz -C /usr/local/bin && \
     chmod +x /usr/local/bin/nargo
 
-# Download bb (Barretenberg backend)
-RUN mkdir -p /tmp/bb-extract && \
-    curl -L "https://github.com/AztecProtocol/aztec-packages/releases/download/barretenberg-v0.82.2/barretenberg-x86_64-linux-gnu.tar.gz" \
-    | tar xz -C /tmp/bb-extract && \
-    find /tmp/bb-extract -name "bb" -type f -exec cp {} /usr/local/bin/bb \; && \
+# Download bb v1.0.0-nightly.20250723 (Barretenberg backend)
+RUN curl -L "https://github.com/AztecProtocol/aztec-packages/releases/download/v1.0.0-nightly.20250723/barretenberg-amd64-linux.tar.gz" \
+    | tar xz -C /usr/local/bin && \
     chmod +x /usr/local/bin/bb
 
-# Stage 4: Production runtime
+# Collect glibc 2.39 shared libraries that bb needs (not available in Debian Bookworm)
+RUN mkdir -p /bb-libs && \
+    cp /lib/x86_64-linux-gnu/libc.so.6 /bb-libs/ && \
+    cp /lib/x86_64-linux-gnu/libm.so.6 /bb-libs/ && \
+    cp /lib/x86_64-linux-gnu/libpthread.so.0 /bb-libs/ 2>/dev/null || true && \
+    cp /lib/x86_64-linux-gnu/libdl.so.2 /bb-libs/ 2>/dev/null || true && \
+    cp /lib/x86_64-linux-gnu/libstdc++.so.6 /bb-libs/ && \
+    cp /lib/x86_64-linux-gnu/libgcc_s.so.1 /bb-libs/ && \
+    cp /lib64/ld-linux-x86-64.so.2 /bb-libs/
+
+# Stage 4: Production runtime (lightweight node:20-slim)
 FROM node:20-slim
 
 # Install dumb-init for proper signal handling
 RUN apt-get update && \
-    apt-get install -y dumb-init && \
+    apt-get install -y --no-install-recommends dumb-init jq && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -68,7 +75,14 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 # Copy ZK tooling binaries from zk-tools stage
 COPY --from=zk-tools /usr/local/bin/nargo /usr/local/bin/nargo
-COPY --from=zk-tools /usr/local/bin/bb /usr/local/bin/bb
+COPY --from=zk-tools /usr/local/bin/bb /usr/local/bin/bb.real
+
+# Copy Ubuntu 24.04 glibc libs for bb (glibc 2.39 > Bookworm's 2.36)
+COPY --from=zk-tools /bb-libs/ /usr/local/lib/bb-libs/
+
+# Wrapper script: run bb with Ubuntu glibc via ld-linux dynamic linker
+RUN printf '#!/bin/sh\nexec /usr/local/lib/bb-libs/ld-linux-x86-64.so.2 --library-path /usr/local/lib/bb-libs /usr/local/bin/bb.real "$@"\n' > /usr/local/bin/bb && \
+    chmod +x /usr/local/bin/bb
 
 # Copy Next.js standalone build output
 COPY --from=builder /app/.next/standalone ./
