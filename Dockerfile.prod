@@ -27,6 +27,12 @@ COPY src ./src
 # Copy public assets
 RUN mkdir -p public && (cp -r public/* ./public/ 2>/dev/null || true)
 
+# Build-time env vars baked into client bundle
+ARG NEXT_PUBLIC_DEMO_URL
+ENV NEXT_PUBLIC_DEMO_URL=${NEXT_PUBLIC_DEMO_URL}
+ARG NEXT_PUBLIC_DASHBOARD_URL
+ENV NEXT_PUBLIC_DASHBOARD_URL=${NEXT_PUBLIC_DASHBOARD_URL}
+
 # Build Next.js app
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production

@@ -9,8 +9,8 @@ interface TopBarProps {
 }
 
 export default function TopBar({ mode, onModeChange, disabled }: TopBarProps) {
-  const demoUrl = process.env.NEXT_PUBLIC_DEMO_URL || 'https://demo.zkproofport.app';
-  const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.zkproofport.app';
+  const demoUrl = process.env.NEXT_PUBLIC_DEMO_URL;
+  const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
 
   return (
     <div className="flex items-center justify-between px-4 py-2 bg-terminal-bg border-b border-terminal-dim/30 text-xs md:text-sm font-mono">

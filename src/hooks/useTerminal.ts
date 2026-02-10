@@ -237,7 +237,7 @@ export function useTerminal() {
       return;
     }
     if (trimmed === '/demo' || trimmed === 'demo') {
-      window.open(process.env.NEXT_PUBLIC_DEMO_URL || 'https://demo.zkproofport.app', '_blank');
+      window.open(process.env.NEXT_PUBLIC_DEMO_URL || '/demo', '_blank');
       addLines([makeLine('system', 'Opening demo page in a new tab...')]);
       return;
     }
