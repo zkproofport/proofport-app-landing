@@ -1,10 +1,11 @@
 export const networkMetrics = {
-  proofsGenerated: 1247,
-  onChainVerified: 892,
-  uniqueWallets: 341,
+  proofsGenerated: 42,
+  onChainVerified: 37,
+  uniqueWallets: 3,
+  aiConversations: 7,
   circuitsDeployed: 2,
-  avgProofTime: '3.2s',
+  avgProofTime: '~90s',
   network: 'Base Sepolia',
-  verificationRate: 89.2,
-  lastUpdated: '2026-01-15',
+  verificationRate: 88.1,
+  lastUpdated: '2026-02-19',
 };
