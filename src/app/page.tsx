@@ -120,6 +120,7 @@ export default function Home() {
             streamingContent={chatMode.streamingContent}
             isProcessing={chatMode.isProcessing}
             followUpSuggestions={chatMode.followUpSuggestions}
+            currentSteps={chatMode.currentSteps}
           />
         )}
         {terminal.mode === 'develop' && (

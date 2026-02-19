@@ -18,6 +18,7 @@ export interface ChatViewProps {
   streamingContent: string;
   isProcessing: boolean;
   followUpSuggestions?: string[];
+  currentSteps?: string[];
 }
 
 /* ------------------------------------------------------------------ */
@@ -28,29 +29,14 @@ const SPINNER_FRAMES = ['\u280B', '\u2819', '\u2839', '\u2838', '\u283C', '\u283
 const SPINNER_SPEED = 80;
 
 const ALL_SUGGESTIONS = [
-  // Product
-  'ZKProofport\uAC00 \uBB50\uC57C?',
+  'Generate a Coinbase KYC proof',
+  'What circuits do you support?',
+  'Verify a proof on-chain',
+  '\uC99D\uBA85\uC744 \uC0DD\uC131\uD574\uC918',
   'How does ZKProofport work?',
-  // Technology
-  'Noir \uD68C\uB85C\uAC00 \uBB54\uAC00\uC694?',
-  '\uC99D\uBA85 \uC0DD\uC131\uC5D0 \uC5BC\uB9C8\uB098 \uAC78\uB824?',
-  'What is Barretenberg?',
-  // Use Cases
-  'KYC\uB97C \uC5B4\uB5BB\uAC8C \uD504\uB77C\uC774\uBC84\uC2DC \uBCF4\uD638\uD558\uB098\uC694?',
-  '\uC5B4\uB5A4 dApp\uC5D0 \uD65C\uC6A9\uD560 \uC218 \uC788\uC5B4?',
-  'ZKPSwap\uC774 \uBB50\uC57C?',
-  // Integration
-  'SDK \uC5F0\uB3D9\uC740 \uC5B4\uB5BB\uAC8C \uD574?',
-  'API \uD0A4\uB294 \uC5B4\uB5BB\uAC8C \uBC1C\uAE09\uBC1B\uC544?',
-  // Pricing
-  '\uAC00\uACA9 \uC815\uCC45\uC774 \uC5B4\uB5BB\uAC8C \uB3FC?',
-  'Is there a free tier?',
-  // Security
-  'Nullifier\uB294 \uC5B4\uB5BB\uAC8C \uC791\uB3D9\uD574?',
-  '\uC628\uCCB4\uC778 \uAC80\uC99D\uC740 \uC5B4\uB5BB\uAC8C \uC774\uB8E8\uC5B4\uC838?',
-  // Architecture
-  '\uC804\uCCB4 \uC544\uD0A4\uD14D\uCC98\uB97C \uC124\uBA85\uD574\uC918',
-  'What circuits are supported?',
+  'What is x402 payment?',
+  'Tell me about proveragent.eth',
+  'List supported circuits',
 ];
 
 /** Pick `count` random items from an array (Fisher-Yates partial shuffle). */
@@ -339,6 +325,21 @@ function AssistantStreaming({ content }: { content: string }) {
   );
 }
 
+/** Step progress messages from the AI agent. */
+function StepMessages({ steps }: { steps: string[] }) {
+  if (steps.length === 0) return null;
+  return (
+    <div className="flex flex-col gap-1.5 max-w-[90%] md:max-w-[80%]">
+      {steps.map((step, idx) => (
+        <div key={idx} className="flex gap-3 items-start">
+          <span className="text-terminal-cyan text-sm mt-0.5 shrink-0 select-none" aria-hidden>&#x2726;</span>
+          <span className="text-xs font-mono text-terminal-dim leading-relaxed">{step}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /** Processing indicator (Braille spinner). */
 function ProcessingIndicator({ spinner }: { spinner: string }) {
   return (
@@ -386,10 +387,10 @@ function WelcomeScreen({
       <div className="text-center mb-8 select-none">
         <h1 className="text-2xl md:text-3xl font-mono font-bold mb-3 tracking-tight">
           <span className="text-terminal-cyan">&#x25C6;</span>{' '}
-          <span className="text-[#d4d4d4]">{'\uC548\uB155\uD558\uC138\uC694'}</span>
+          <span className="text-[#d4d4d4]">proveragent.eth</span>
         </h1>
         <p className="text-lg md:text-xl font-mono text-terminal-dim">
-          {'\uBB34\uC5C7\uC744 \uB3C4\uC640\uB4DC\uB9B4\uAE4C\uC694?'}
+          ZK proof generation and verification agent
         </p>
       </div>
 
@@ -436,6 +437,7 @@ function ChatScreen({
   disabled,
   followUpSuggestions,
   placeholderSuggestions,
+  currentSteps,
 }: {
   messages: ChatMessage[];
   isStreaming: boolean;
@@ -449,6 +451,7 @@ function ChatScreen({
   disabled: boolean;
   followUpSuggestions: string[];
   placeholderSuggestions: string[];
+  currentSteps: string[];
 }) {
   const showFollowUps = followUpSuggestions.length > 0 && !isStreaming && !isProcessing;
 
@@ -457,6 +460,7 @@ function ChatScreen({
     streamingContent,
     isProcessing,
     followUpSuggestions.length,
+    currentSteps.length,
   ]);
 
   return (
@@ -476,14 +480,19 @@ function ChatScreen({
             ),
           )}
 
-          {/* Streaming response */}
-          {isStreaming && streamingContent.length > 0 && (
-            <AssistantStreaming content={streamingContent} />
+          {/* Processing spinner (before first token) */}
+          {isProcessing && (
+            <ProcessingIndicator spinner={spinner} />
           )}
 
-          {/* Processing spinner (before first token) */}
-          {isProcessing && !isStreaming && (
-            <ProcessingIndicator spinner={spinner} />
+          {/* Step progress messages from AI agent */}
+          {currentSteps.length > 0 && (
+            <StepMessages steps={currentSteps} />
+          )}
+
+          {/* Streaming response */}
+          {streamingContent.length > 0 && (
+            <AssistantStreaming content={streamingContent} />
           )}
 
           {/* Follow-up suggestion chips */}
@@ -527,6 +536,7 @@ export default function ChatView({
   streamingContent,
   isProcessing,
   followUpSuggestions = [],
+  currentSteps = [],
 }: ChatViewProps) {
   const [inputValue, setInputValue] = useState('');
   const spinner = useSpinner(isProcessing && !isStreaming);
@@ -582,6 +592,7 @@ export default function ChatView({
           disabled={isBusy}
           followUpSuggestions={followUpSuggestions}
           placeholderSuggestions={placeholderSuggestions}
+          currentSteps={currentSteps}
         />
       )}
     </div>
