@@ -2,8 +2,7 @@
 
 import { useState, useCallback, useRef } from 'react';
 import { useSSE } from '@/hooks/useSSE';
-import { useSession } from '@/hooks/useSession';
-import { playCompletionChime } from '@/lib/sounds';
+import { SSEEvent } from '@/types';
 
 // ---------------------------------------------------------------------------
 // DevelopLine: the atomic unit for the Develop tab's Claude Code-style UI
@@ -19,7 +18,7 @@ export type DevelopLineType =
   | 'step_done'     // Step result indicator
   | 'summary'       // Final summary
   | 'error'         // Error message
-  | 'status';       // Status messages (creating session, interpreting...)
+  | 'status';       // Status messages (connecting...)
 
 export interface DevelopLine {
   id: string;
@@ -34,96 +33,108 @@ function makeId(): string {
   return Math.random().toString(36).slice(2);
 }
 
+interface SessionInfo {
+  sessionId: string;
+  sessionSecret: string;
+}
+
 // ---------------------------------------------------------------------------
 // Hook: useDevelopMode
 // ---------------------------------------------------------------------------
 
 export function useDevelopMode() {
   const { stream, isStreaming: isSSEStreaming } = useSSE();
-  const { session, createSession, isCreating } = useSession();
   const [lines, setLines] = useState<DevelopLine[]>([]);
   const isStreamingRef = useRef(false);
+  const sessionRef = useRef<SessionInfo | null>(null);
+  const contentRef = useRef('');
 
   const addLine = useCallback((type: DevelopLineType, content: string, extra?: Partial<DevelopLine>) => {
     setLines(prev => [...prev, { id: makeId(), type, content, ...extra }]);
   }, []);
 
+  // Update the last explanation line instead of adding new ones (for streaming text)
+  const updateOrAddExplanation = useCallback((text: string) => {
+    setLines(prev => {
+      const lastIdx = prev.length - 1;
+      if (lastIdx >= 0 && prev[lastIdx].type === 'explanation') {
+        const updated = [...prev];
+        updated[lastIdx] = { ...updated[lastIdx], content: text };
+        return updated;
+      }
+      return [...prev, { id: makeId(), type: 'explanation', content: text }];
+    });
+  }, []);
+
   const executePrompt = useCallback(async (prompt: string) => {
     if (isSSEStreaming || isStreamingRef.current || !prompt.trim()) return;
     isStreamingRef.current = true;
+    contentRef.current = '';
 
     // Show user prompt
     addLine('user', prompt);
+    addLine('status', 'Connecting to proveragent.eth...');
 
-    // Ensure session exists
-    let currentSession = session;
-    if (!currentSession) {
-      addLine('status', 'Initializing sandbox...');
-      currentSession = await createSession();
-      if (!currentSession) {
-        addLine('error', 'Failed to create session. Please try again.');
-        isStreamingRef.current = false;
-        return;
-      }
+    const reqBody: Record<string, string> = { prompt };
+    if (sessionRef.current) {
+      reqBody.sessionId = sessionRef.current.sessionId;
+      reqBody.sessionSecret = sessionRef.current.sessionSecret;
     }
 
-    addLine('status', 'Thinking...');
+    let stepCount = 0;
 
-    await stream('/api/execute', { sessionId: currentSession.sessionId, prompt }, (event) => {
-      switch (event.type) {
-        case 'explanation':
-          if (event.content) {
-            addLine('explanation', event.content);
-          }
-          break;
-        case 'command':
-          addLine('step', event.description || '', {
-            step: event.step,
-            total: event.total,
-          });
-          if (event.command) {
-            addLine('command', event.command);
-          }
-          break;
-        case 'stdout':
-          if (event.content) {
-            event.content.split('\n').forEach(line => {
-              if (line.trim()) addLine('stdout', line);
-            });
-          }
-          break;
-        case 'stderr':
-          if (event.content) {
-            event.content.split('\n').forEach(line => {
-              if (line.trim()) addLine('stderr', line);
-            });
-          }
-          break;
-        case 'command_done':
-          addLine('step_done', event.exitCode === 0 ? 'completed' : 'failed', {
-            step: event.step,
-            exitCode: event.exitCode,
-          });
-          break;
-        case 'done':
-          if (event.summary) {
-            addLine('summary', event.summary);
-          }
-          playCompletionChime();
-          break;
-        case 'error':
-          addLine('error', event.message || 'Unknown error');
-          break;
+    await stream('/api/ai-develop', reqBody, (event: SSEEvent) => {
+      // Session event
+      if (event.type === 'session') {
+        const ev = event as SSEEvent & { sessionId?: string; sessionSecret?: string };
+        if (ev.sessionId) {
+          sessionRef.current = {
+            sessionId: ev.sessionId,
+            sessionSecret: ev.sessionSecret || '',
+          };
+        }
+        return;
+      }
+
+      // Step event — show as command-style step
+      if (event.type === 'step') {
+        stepCount++;
+        const stepMsg = event.message || event.content || '';
+        addLine('command', stepMsg);
+        return;
+      }
+
+      // Content chunk — OpenAI delta format
+      const ev = event as SSEEvent & { choices?: Array<{ delta?: { content?: string } }> };
+      if (ev.choices?.[0]?.delta?.content) {
+        contentRef.current += ev.choices[0].delta.content;
+        updateOrAddExplanation(contentRef.current);
+        return;
+      }
+
+      // Done
+      if (event.type === 'done') {
+        if (stepCount > 0) {
+          addLine('summary', `Completed with ${stepCount} step(s)`);
+        }
+        return;
+      }
+
+      // Error
+      if (event.type === 'error') {
+        const errMsg = event.message || 'Unknown error';
+        addLine('error', errMsg);
+        return;
       }
     });
 
     isStreamingRef.current = false;
-  }, [stream, isSSEStreaming, session, createSession, addLine]);
+  }, [stream, isSSEStreaming, addLine, updateOrAddExplanation]);
 
   return {
     lines,
     executePrompt,
     isStreaming: isSSEStreaming,
-    isCreating,
+    isCreating: false, // No more session creation needed
   };
 }

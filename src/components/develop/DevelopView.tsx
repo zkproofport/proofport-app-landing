@@ -22,29 +22,26 @@ function BootScreen() {
   return (
     <div className="flex-1 flex items-center justify-center select-none px-4">
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
-        {/* ASCII shield */}
         <pre
           className="font-mono text-[11px] md:text-xs leading-[1.45] shrink-0"
           style={{ color: '#64748b' }}
           aria-hidden="true"
         >
 {`    \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557
-    \u2551  \u2693   \u2551
-    \u2551 \u2571   \u2572 \u2551
-    \u2551\u2571  \u2b21  \u2572\u2551
+    \u2551  \u25c8\u25c8\u25c8  \u2551
+    \u2551 \u2571 \u2b21 \u2572 \u2551
+    \u2551\u2571  \u25cf  \u2572\u2551
     \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d`}
         </pre>
-
-        {/* Product info */}
         <div className="flex flex-col justify-center gap-1 text-center sm:text-left pt-0 sm:pt-1">
           <span className="text-terminal-cyan font-semibold text-xs md:text-sm tracking-tight">
-            ZKProofport Develop v0.1.0
+            proveragent.eth
           </span>
           <span className="text-xs" style={{ color: '#94a3b8' }}>
-            Noir Circuit Builder &middot; Gemini 2.5 Flash
+            ZK Proof Agent &middot; MCP + A2A + Chat
           </span>
-          <span className="text-xs" style={{ color: '#94a3b8' }}>
-            ~/sandbox
+          <span className="text-xs" style={{ color: '#64748b' }}>
+            stg-ai.zkproofport.app
           </span>
         </div>
       </div>
@@ -283,7 +280,7 @@ export default function DevelopView({
             onChange={setInputValue}
             onSubmit={handleSubmit}
             disabled={isDisabled}
-            placeholder={'Try "compile a simple age circuit"'}
+            placeholder={'Try "Generate a Coinbase KYC proof"'}
           />
         </>
       ) : (
@@ -297,7 +294,7 @@ export default function DevelopView({
             onChange={setInputValue}
             onSubmit={handleSubmit}
             disabled={isDisabled}
-            placeholder={'Describe what to build next...'}
+            placeholder={'Ask the agent anything...'}
           />
         </>
       )}
