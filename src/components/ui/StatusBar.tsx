@@ -12,7 +12,7 @@ export default function StatusBar({ mode, sectionIndex, totalSections }: StatusB
   const modeLabel = {
     browse: 'BROWSE',
     chat: 'CHAT',
-    develop: 'DEVELOP',
+    develop: 'MCP',
   }[mode];
 
   const modeColor = {

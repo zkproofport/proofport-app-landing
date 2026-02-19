@@ -18,7 +18,7 @@ export default function TopBar({ mode, onModeChange, disabled }: TopBarProps) {
         <span className="text-terminal-text font-bold tracking-wider">ZKProofport</span>
         <div className="hidden md:flex items-center gap-1 ml-4">
           {(['browse', 'develop', 'chat'] as TerminalMode[]).map((m) => {
-            const label: Record<TerminalMode, string> = { browse: 'Browser', develop: 'Develop', chat: 'Chat' };
+            const label: Record<TerminalMode, string> = { browse: 'Browser', develop: 'MCP', chat: 'Chat' };
             return (
               <button
                 key={m}

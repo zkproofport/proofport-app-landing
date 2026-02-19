@@ -249,7 +249,7 @@ export function useTerminal() {
         ),
         makeLine('info', ''),
         makeLine('info', '  /chat              Ask questions about ZKProofport'),
-        makeLine('info', '  /develop           Interactive ZK proof playground'),
+        makeLine('info', '  /develop           MCP interactive playground'),
         makeLine('info', '  /demo              Open live demo (external)'),
         makeLine('info', ''),
         makeLine('info', '  Press [Enter] to advance, or type a command.'),
