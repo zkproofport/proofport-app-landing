@@ -9,6 +9,18 @@ interface AISessionInfo {
   sessionSecret: string;
 }
 
+/**
+ * Strip ```proofport DSL block from display text.
+ * Handles both complete blocks and partial/incomplete blocks during streaming.
+ */
+function stripProofportBlock(content: string): string {
+  // Strip complete proofport blocks
+  let cleaned = content.replace(/\n?\n?```proofport\n[\s\S]*?\n```\s*$/g, '');
+  // Strip partial/incomplete proofport block that hasn't closed yet (during streaming)
+  cleaned = cleaned.replace(/\n?\n?```proofport[\s\S]*$/g, '');
+  return cleaned.trimEnd();
+}
+
 export function useChatMode() {
   const { stream, isStreaming: isSSEStreaming } = useSSE();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -67,7 +79,7 @@ export function useChatMode() {
         isProcessingRef.current = false;
         setIsProcessing(false);
         if (fullResponseRef.current) {
-          setMessages(prev => [...prev, { role: 'assistant', content: fullResponseRef.current }]);
+          setMessages(prev => [...prev, { role: 'assistant', content: stripProofportBlock(fullResponseRef.current) }]);
         }
         setStreamingContent('');
         return;
@@ -97,7 +109,7 @@ export function useChatMode() {
           setIsProcessing(false);
         }
         fullResponseRef.current += chunk;
-        setStreamingContent(fullResponseRef.current);
+        setStreamingContent(stripProofportBlock(fullResponseRef.current));
       }
     });
   }, [stream, isSSEStreaming]);

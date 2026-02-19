@@ -33,6 +33,12 @@ function makeId(): string {
   return Math.random().toString(36).slice(2);
 }
 
+function stripProofportBlock(content: string): string {
+  let cleaned = content.replace(/\n?\n?```proofport\n[\s\S]*?\n```\s*$/g, '');
+  cleaned = cleaned.replace(/\n?\n?```proofport[\s\S]*$/g, '');
+  return cleaned.trimEnd();
+}
+
 interface SessionInfo {
   sessionId: string;
   sessionSecret: string;
@@ -108,7 +114,7 @@ export function useDevelopMode() {
       const ev = event as SSEEvent & { choices?: Array<{ delta?: { content?: string } }> };
       if (ev.choices?.[0]?.delta?.content) {
         contentRef.current += ev.choices[0].delta.content;
-        updateOrAddExplanation(contentRef.current);
+        updateOrAddExplanation(stripProofportBlock(contentRef.current));
         return;
       }
 
