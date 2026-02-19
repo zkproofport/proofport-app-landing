@@ -38,6 +38,7 @@ export function useSSE() {
 
       const decoder = new TextDecoder();
       let buffer = '';
+      let currentEventType: string | null = null;
 
       while (true) {
         const { done, value } = await reader.read();
@@ -48,13 +49,36 @@ export function useSSE() {
         buffer = lines.pop() || '';
 
         for (const line of lines) {
+          // Skip SSE comments / heartbeat
+          if (line.startsWith(':')) continue;
+
+          // Track named event type (e.g. "event: step")
+          if (line.startsWith('event: ')) {
+            currentEventType = line.slice(7).trim();
+            continue;
+          }
+
           if (line.startsWith('data: ')) {
+            const dataStr = line.slice(6);
+
+            // Handle [DONE] sentinel
+            if (dataStr === '[DONE]') {
+              onEvent({ type: 'done' } as SSEEvent);
+              currentEventType = null;
+              continue;
+            }
+
             try {
-              const event: SSEEvent = JSON.parse(line.slice(6));
+              const event: SSEEvent = JSON.parse(dataStr);
+              // Override type if this data line was preceded by a named event
+              if (currentEventType) {
+                event.type = currentEventType;
+              }
               onEvent(event);
             } catch {
               // skip malformed events
             }
+            currentEventType = null;
           }
         }
       }
