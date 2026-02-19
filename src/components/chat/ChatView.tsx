@@ -1,15 +1,11 @@
 'use client';
 
 import { useState, useMemo, useRef, useEffect, useCallback, type KeyboardEvent } from 'react';
+import type { ChatMessage } from '@/types';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
-
-export interface ChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
-}
 
 export interface ChatViewProps {
   messages: ChatMessage[];
