@@ -1,3 +1,11 @@
+# ====================
+# OS Generated Files
+# ====================
+.DS_Store
+
+# OMC (oh-my-claudecode)
+.omc/
+
 node_modules/
 .next/
 out/
@@ -6,7 +14,4 @@ out/
 .env.production
 *.tsbuildinfo
 next-env.d.ts
-
-# OMC (oh-my-claudecode)
-.omc/
 
